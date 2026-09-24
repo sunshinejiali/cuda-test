@@ -1,0 +1,20 @@
+{
+    "version": 4,
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/usr/local/cuda/include"
+            ],
+            "defines": [
+                "__CUDACC__",  // 👈 加上这行，欺骗 VS Code 让它知道你在写 CUDA
+                "__CUDA_ARCH__"
+            ],
+            "compilerPath": "/usr/local/cuda/bin/nvcc",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ]
+}
