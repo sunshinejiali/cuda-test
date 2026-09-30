@@ -14,6 +14,39 @@
 #include <cuda_runtime.h>
 #include <stdio.h>
 
+#include <cuda_runtime.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+// 1. 用于CUDA API调用：cudaMalloc / cudaMemcpy / cudaStreamCreate 等
+#define CUDA_CHECK_API(call) { \
+    cudaError_t err = call; \
+    if(err != cudaSuccess) { \
+        printf("API ERROR: %s at line %d\n", cudaGetErrorString(err), __LINE__); \
+        exit(EXIT_FAILURE); \
+    } \
+}
+
+// 2. 核函数启动后，捕获 launch error（启动错误，如block尺寸非法）
+#define CUDA_CHECK_KERNEL_LAUNCH() { \
+    cudaError_t err = cudaGetLastError(); \
+    if(err != cudaSuccess) { \
+        printf("KERNEL LAUNCH ERROR: %s at line %d\n", cudaGetErrorString(err), __LINE__); \
+        exit(EXIT_FAILURE); \
+    } \
+}
+
+// 3. 核函数运行时错误：必须同步之后再检查（访问越界等运行异常）
+#define CUDA_CHECK_KERNEL_RUNTIME() { \
+    CUDA_CHECK_API(cudaDeviceSynchronize()); \
+    cudaError_t err = cudaGetLastError(); \
+    if(err != cudaSuccess) { \
+        printf("KERNEL RUNTIME ERROR: %s at line %d\n", cudaGetErrorString(err), __LINE__); \
+        exit(EXIT_FAILURE); \
+    } \
+}
+
+
 #define CUDA_CHECK(call) { \
     cudaError_t err = call; \
     if(err != cudaSuccess) { \
